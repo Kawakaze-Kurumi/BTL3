@@ -8,10 +8,11 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnTamDung"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:onClick="TamDung"
+        android:text="Tạm dừng" />
 
     <GridView
         android:id="@+id/gridView"

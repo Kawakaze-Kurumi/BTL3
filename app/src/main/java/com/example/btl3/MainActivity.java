@@ -1,11 +1,18 @@
 package com.example.btl3;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,9 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
     public int previousClickedPosition = -1;
     public int numberOfColumns = 6;
-
     public int NumberOfClick =0;
 
+    public Dialog dialog;
+    public Button dialogtieptuc, dialogthoat, tamdung;
+
+    @SuppressLint({"UseCompatLoadingForDrawables", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +62,30 @@ public class MainActivity extends AppCompatActivity {
         }
         ImageAdapter imageAdapter = new ImageAdapter(MainActivity.this,imageList);
         binding.gridView.setAdapter(imageAdapter);
+
+        dialog = new Dialog(MainActivity.this);
+        dialog.setContentView(R.layout.dialog_box);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.custom_dialog_box));
+        dialog.setCancelable(false);
+        dialogtieptuc = dialog.findViewById(R.id.btnDialogTieptuc);
+        dialogthoat = dialog.findViewById(R.id.btnDialogThoat);
+        dialogtieptuc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialogthoat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(....);
+                //startActivity(intent);
+                //finish();
+
+            }
+        });
+
 
         binding.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -125,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+    }
+    public void TamDung(View view){
+        dialog.show();
     }
 }
