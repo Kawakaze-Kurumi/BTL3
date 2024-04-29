@@ -82,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 //Intent intent = new Intent(....);
                 //startActivity(intent);
                 //finish();
-
+                Intent intent = new Intent(MainActivity.this, StartActivity.class);
+                //Khởi chạy activity
+                startActivity(intent);
             }
         });
 
