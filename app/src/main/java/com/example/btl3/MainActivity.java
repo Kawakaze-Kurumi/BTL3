@@ -1,5 +1,7 @@
 package com.example.btl3;
 
+import static android.widget.Toast.makeText;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -36,10 +38,43 @@ public class MainActivity extends AppCompatActivity {
 
     public int previousClickedPosition = -1;
     public int numberOfColumns = 6;
-    public int NumberOfClick =0;
+    public int NumberOfClick = 0;
 
     public Dialog dialog;
-    public Button dialogtieptuc, dialogthoat, tamdung;
+
+    public Button dialogtieptuc, dialogthoat;
+    private void checkAllImagesMatched() {
+        if (ImageAdapter.areAllImagesMatched()) {
+            // Display your dialog here
+            showDialog();
+        }
+    }
+
+    private void showDialog() {
+        // Display your dialog code here
+        // For example:
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("XIN CHÚC MỪNG");
+        builder.setMessage("BẠN ĐÃ HOÀN THÀNH TRÒ CHƠI MỘT CÁCH XUẤT SẮC");
+        builder.setPositiveButton("THOÁT", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, StartActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("MÀN TIẾP", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    // Modify onItemClick method to call checkAllImagesMatched() after each click
 
     @SuppressLint({"UseCompatLoadingForDrawables", "MissingInflatedId"})
     @Override
@@ -79,11 +114,7 @@ public class MainActivity extends AppCompatActivity {
         dialogthoat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(....);
-                //startActivity(intent);
-                //finish();
                 Intent intent = new Intent(MainActivity.this, StartActivity.class);
-                //Khởi chạy activity
                 startActivity(intent);
             }
         });
@@ -96,10 +127,12 @@ public class MainActivity extends AppCompatActivity {
                 int column = position % numberOfColumns;
                 int row = position / numberOfColumns;
 
+
                 if (previousClickedPosition != -1 && previousClickedPosition != position) {
-                    // Lấy số cột của vị trí trước đó
+                     //Lấy số cột của vị trí trước đó
                     int previousColumn = previousClickedPosition % numberOfColumns;
                     int previousRow = previousClickedPosition / numberOfColumns;
+                    checkAllImagesMatched();
 
                     // Kiểm tra xem cả hai vị trí có cùng nằm trên cùng một hàng thẳng hay không
                     boolean column2 = false;
@@ -110,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean isVerticalNeighbor = (column == previousColumn) && (Math.abs(row - previousRow) == 1);
                     boolean isSameRow = row == previousRow;
                     boolean isSameColumn = column == previousColumn;
+
                     if(column == 0 && previousColumn ==0){
                         column2 =true;
                     }
@@ -142,7 +176,8 @@ public class MainActivity extends AppCompatActivity {
                             imageAdapter.setImageState(position, true);
                         }
                     }
-                    if ( (column == previousColumn && column2)||(column == previousColumn && column3) || (row == previousRow && row2) || (row == previousRow && row3)
+                    if ( (column == previousColumn && column2)||(column == previousColumn && column3)
+                            || (row == previousRow && row2) || (row == previousRow && row3)
                     || isHorizontalNeighbor || isVerticalNeighbor) {
                         // Hai vị trí nằm trên cùng một hàng thẳng, thực hiện xử lý
                         if (imageAdapter.isImagesMatched(previousClickedPosition, position)) {
@@ -151,7 +186,23 @@ public class MainActivity extends AppCompatActivity {
                             imageAdapter.setImageState(position, true);
                         }
                     }
+
+
+//                    if(column != previousColumn+1 && column!= previousColumn-1 && row != previousRow+1 && row != previousRow-1){
+//                        try {
+//                            int[][] Matrix = imageAdapter.createMatrix(previousClickedPosition, position, numberOfColumns);
+//                            boolean tamgiac = imageAdapter.hasObstacleBetween(Matrix,previousClickedPosition/numberOfColumns, previousClickedPosition%numberOfColumns, position/numberOfColumns,position%numberOfColumns);
+//                            if(tamgiac){
+//                                imageAdapter.setImageState(previousClickedPosition, true);
+//                                imageAdapter.setImageState(position, true);
+//                            }
+//                        }
+//                        catch (Exception e){
+//                            Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+//                        }
+//                    }
                 }
+
                 // Lưu vị trí của hình ảnh hiện tại để sử dụng cho lần nhấp tiếp theo
                 previousClickedPosition = position;
                 NumberOfClick++;
@@ -165,4 +216,6 @@ public class MainActivity extends AppCompatActivity {
     public void TamDung(View view){
         dialog.show();
     }
+
+
 }
