@@ -127,12 +127,10 @@ public class MainActivity extends AppCompatActivity {
                 int column = position % numberOfColumns;
                 int row = position / numberOfColumns;
 
-
                 if (previousClickedPosition != -1 && previousClickedPosition != position) {
                      //Lấy số cột của vị trí trước đó
                     int previousColumn = previousClickedPosition % numberOfColumns;
                     int previousRow = previousClickedPosition / numberOfColumns;
-                    checkAllImagesMatched();
 
                     // Kiểm tra xem cả hai vị trí có cùng nằm trên cùng một hàng thẳng hay không
                     boolean column2 = false;
@@ -159,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
                     if (isSameRow) {
                         // Kiểm tra xem ảnh giữa hai ảnh có phải là ảnh rỗng hay không
                         boolean areMiddleImagesEmpty = imageAdapter.areMiddleImagesEmpty(previousClickedPosition, position);
-
+                        boolean isImagesMatched=imageAdapter.isImagesMatched(previousClickedPosition, position);
                         // Nếu tất cả các ảnh giữa là ảnh rỗng, thì hai ảnh được chọn thành ảnh rỗng
-                        if (areMiddleImagesEmpty) {
+                        if (areMiddleImagesEmpty&&isImagesMatched) {
                             imageAdapter.setImageState(previousClickedPosition, true);
                             imageAdapter.setImageState(position, true);
                         }
@@ -169,9 +167,15 @@ public class MainActivity extends AppCompatActivity {
                     if (isSameColumn) {
                         // Kiểm tra xem tất cả các ảnh nằm trên cùng một cột giữa hai ảnh có phải là ảnh rỗng hay không
                         boolean areMiddleImagesEmpty = imageAdapter.areMiddleImagesEmpty2(previousClickedPosition, position, numberOfColumns);
-
+                        boolean isImagesMatched=imageAdapter.isImagesMatched(previousClickedPosition, position);
                         // Nếu tất cả các ảnh là ảnh rỗng, thì hai ảnh được chọn thành ảnh rỗng
-                        if (areMiddleImagesEmpty) {
+                        if (areMiddleImagesEmpty&&isImagesMatched) {
+                            imageAdapter.setImageState(previousClickedPosition, true);
+                            imageAdapter.setImageState(position, true);
+                        }
+                    }
+                    if(imageAdapter.ConnectableThroughBorder(previousClickedPosition,position,numberOfColumns)){
+                        if (imageAdapter.isImagesMatched(previousClickedPosition, position)) {
                             imageAdapter.setImageState(previousClickedPosition, true);
                             imageAdapter.setImageState(position, true);
                         }
@@ -186,21 +190,7 @@ public class MainActivity extends AppCompatActivity {
                             imageAdapter.setImageState(position, true);
                         }
                     }
-
-
-//                    if(column != previousColumn+1 && column!= previousColumn-1 && row != previousRow+1 && row != previousRow-1){
-//                        try {
-//                            int[][] Matrix = imageAdapter.createMatrix(previousClickedPosition, position, numberOfColumns);
-//                            boolean tamgiac = imageAdapter.hasObstacleBetween(Matrix,previousClickedPosition/numberOfColumns, previousClickedPosition%numberOfColumns, position/numberOfColumns,position%numberOfColumns);
-//                            if(tamgiac){
-//                                imageAdapter.setImageState(previousClickedPosition, true);
-//                                imageAdapter.setImageState(position, true);
-//                            }
-//                        }
-//                        catch (Exception e){
-//                            Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
-//                        }
-//                    }
+                    checkAllImagesMatched();
                 }
 
                 // Lưu vị trí của hình ảnh hiện tại để sử dụng cho lần nhấp tiếp theo
