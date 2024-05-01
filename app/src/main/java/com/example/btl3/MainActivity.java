@@ -7,10 +7,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,18 +43,38 @@ public class MainActivity extends AppCompatActivity {
     public int previousClickedPosition = -1;
     public int numberOfColumns = 6;
     public int NumberOfClick = 0;
-
+    public TextView timer;
     public Dialog dialog;
-
     public Button dialogtieptuc, dialogthoat;
-    private void checkAllImagesMatched() {
+    public void checkAllImagesMatched() {
         if (ImageAdapter.areAllImagesMatched()) {
             // Display your dialog here
             showDialog();
         }
     }
-
-    private void showDialog() {
+    public void showDialog2() {
+        // For example:
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("THẬT ĐÁNG TIẾC");
+        builder.setMessage("BẠN ĐÃ KHÔNG HOÀN THÀNH TRÒ CHƠI");
+        builder.setPositiveButton("THOÁT", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, StartActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("CHƠI LẠI", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    public void showDialog() {
         // Display your dialog code here
         // For example:
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -81,6 +105,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        timer = findViewById(R.id.countdown_timer);
+        new CountDownTimer(6000,1000){
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timer.setText(String.valueOf(millisUntilFinished/1000));
+            }
+            @Override
+            public void onFinish() {
+                showDialog2();
+            }
+        }.start();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         int repeatCount = 2;
