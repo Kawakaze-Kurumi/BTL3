@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/nen"
     tools:context=".MainActivity">
 
     <Button
@@ -27,6 +28,9 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="10dp"
         android:numColumns="6"
+        android:verticalSpacing="5dp"
+        android:gravity="center"
+        android:padding="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

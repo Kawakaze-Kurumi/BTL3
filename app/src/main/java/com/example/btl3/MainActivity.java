@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         timer = findViewById(R.id.countdown_timer);
-        new CountDownTimer(6000,1000){
+        new CountDownTimer(240000,1000){
             @Override
             public void onTick(long millisUntilFinished) {
                 timer.setText(String.valueOf(millisUntilFinished/1000));
@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 showDialog2();
             }
         }.start();
+        
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         int repeatCount = 2;
