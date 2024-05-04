@@ -13,11 +13,10 @@ import java.util.List;
 
 public class ImageAdapter extends BaseAdapter {
     Context context;
-    static List <Boolean> imageState;
-    static List <Integer> image;
+    static List<Boolean> imageState;
+    static List<Integer> image;
     LayoutInflater inflater;
     public int previousClickedPosition = -1;
-    public int NumberOfItem =60;
     public ImageAdapter(Context context, List<Integer> image ){
         this.context = context;
         this.image = image;
@@ -91,17 +90,13 @@ public class ImageAdapter extends BaseAdapter {
         return true; // Nếu tất cả các ảnh giữa là ảnh rỗng, trả về true
     }
     public boolean areMiddleImagesEmpty2(int position1, int position2, int numberOfColumns) {
-        int startColumn = Math.min(position1 % numberOfColumns, position2 % numberOfColumns);
-        int endColumn = Math.max(position1 % numberOfColumns, position2 % numberOfColumns);
+        int column=position1%numberOfColumns;
         int startRow = Math.min(position1 / numberOfColumns, position2 / numberOfColumns) + 1;
         int endRow = Math.max(position1 / numberOfColumns, position2 / numberOfColumns) - 1;
-
-        for (int column = startColumn; column <= endColumn; column++) {
-            for (int row = startRow; row <= endRow; row++) {
-                int position = row * numberOfColumns + column;
-                if (!imageState.get(position)) {
-                    return false; // Nếu có một ảnh không phải là ảnh rỗng, trả về false
-                }
+        for (int row = startRow; row <= endRow; row++) {
+            int position = row * numberOfColumns + column;
+            if (!imageState.get(position)) {
+                return false; // Nếu có một ảnh không phải là ảnh rỗng, trả về false
             }
         }
         return true; // Nếu tất cả các ảnh là ảnh rỗng, trả về true
@@ -187,6 +182,192 @@ public class ImageAdapter extends BaseAdapter {
         if(ConnectableThroughSouth(position1,position2,numberOfColumns)) return true;
         if(ConnectableThroughWest(position1,position2,numberOfColumns)) return true;
         if(ConnectableThroughEast(position1,position2,numberOfColumns)) return true;
+        return false;
+    }
+    public boolean CommonCol3Dashes(int position1,int position2,int numberOfColumns){
+        int col1=position1%numberOfColumns;
+        int col2=position2%numberOfColumns;
+        int row1=position1/numberOfColumns;
+        int row2=position2/numberOfColumns;
+        boolean iscleared=false;
+        boolean connection1=false;
+        boolean connection2=false;
+        for(int commoncol=0;commoncol<numberOfColumns;commoncol++){
+            int start=Math.min(row1,row2);
+            int end=Math.max(row1,row2);
+            for(int i=start;i<=end;i++){
+                if (!imageState.get((i*numberOfColumns)+commoncol)){
+                    iscleared=false;
+                    break;
+                }
+                else if(i==end) iscleared=true;
+            }
+            if(iscleared){
+                int start1=Math.min(col1,commoncol)+1;
+                int end1=Math.max(col1,commoncol)-1;
+                int start2=Math.min(col2,commoncol)+1;
+                int end2=Math.max(col2,commoncol)-1;
+                if(start1>end1) connection1=true;
+                else{
+                    for(int i=start1;i<=end1;i++){
+                        if (!imageState.get((row1*numberOfColumns)+i)){
+                            connection1=false;
+                            break;
+                        }
+                        else if(i==end1) connection1=true;
+                    }
+                }
+                if(start2>end2) connection2=true;
+                else{
+                    for(int i=start2;i<=end2;i++){
+                        if (!imageState.get((row2*numberOfColumns)+i)){
+                            connection2=false;
+                            break;
+                        }
+                        else if(i==end2) connection2=true;
+                    }
+                }
+                if(connection1&&connection2) return true;
+            }
+        }
+        return false;
+    }
+    public boolean CommonRow3Dashes(int position1,int position2,int numberOfColumns){
+        int col1=position1%numberOfColumns;
+        int col2=position2%numberOfColumns;
+        int row1=position1/numberOfColumns;
+        int row2=position2/numberOfColumns;
+        boolean iscleared=false;
+        boolean connection1=false;
+        boolean connection2=false;
+        for(int commonrow=0;commonrow<10;commonrow++){
+            int start=Math.min(col1,col2);
+            int end=Math.max(col1,col2);
+            for(int i=start;i<=end;i++){
+                if (!imageState.get((commonrow*numberOfColumns)+i)){
+                    iscleared=false;
+                    break;
+                }
+                else if(i==end) iscleared=true;
+            }
+            if(iscleared){
+                int start1=Math.min(row1,commonrow)+1;
+                int end1=Math.max(row1,commonrow)-1;
+                int start2=Math.min(row2,commonrow)+1;
+                int end2=Math.max(row2,commonrow)-1;
+                if(start1>end1) connection1=true;
+                else{
+                    for(int i=start1;i<=end1;i++){
+                        if (!imageState.get((i*numberOfColumns)+col1)){
+                            connection1=false;
+                            break;
+                        }
+                        else if(i==end1) connection1=true;
+                    }
+                }
+                if(start2>end2) connection2=true;
+                else{
+                    for(int i=start2;i<=end2;i++){
+                        if (!imageState.get((i*numberOfColumns)+col2)){
+                            connection2=false;
+                            break;
+                        }
+                        else if(i==end2) connection2=true;
+                    }
+                }
+                if(connection1&&connection2) return true;
+            }
+        }
+        return false;
+    }
+    public boolean ForwardSlash2Dashes(int position1,int position2,int numberOfColumns){
+        boolean connection1=false;
+        boolean connection2=false;
+        int higherposition=Math.min(position1,position2);
+        int lowerposition=Math.max(position1,position2);
+        int higherpositioncol=higherposition%numberOfColumns;
+        int lowerpositioncol=lowerposition%numberOfColumns;
+        int higherpositionrow=higherposition/numberOfColumns;
+        int lowerpositionrow=lowerposition/numberOfColumns;
+        for(int i=lowerpositioncol;i<=higherpositioncol-1;i++){
+            if (!imageState.get((higherpositionrow*numberOfColumns)+i)){
+                connection1=false;
+                break;
+            }
+            else if(i==higherpositioncol-1) connection1=true;
+        }
+        for(int i=higherpositionrow;i<=lowerpositionrow-1;i++){
+            if (!imageState.get((i*numberOfColumns)+lowerpositioncol)){
+                connection2=false;
+                break;
+            }
+            else if(i==lowerpositionrow-1) connection2=true;
+        }
+        if(connection1&&connection2){
+            return true;
+        }
+        for(int i=lowerpositioncol+1;i<=higherpositioncol;i++){
+            if (!imageState.get((lowerpositionrow*numberOfColumns)+i)){
+                connection1=false;
+                break;
+            }
+            else if(i==higherpositioncol) connection1=true;
+        }
+        for(int i=higherpositionrow+1;i<=lowerpositionrow;i++){
+            if (!imageState.get((i*numberOfColumns)+higherpositioncol)){
+                connection2=false;
+                break;
+            }
+            else if(i==lowerpositionrow) connection2=true;
+        }
+        if(connection1&&connection2){
+            return true;
+        }
+        return false;
+    }
+    public boolean BackwardSlash2Dashes(int position1,int position2,int numberOfColumns){
+        boolean connection1=false;
+        boolean connection2=false;
+        int higherposition=Math.min(position1,position2);
+        int lowerposition=Math.max(position1,position2);
+        int higherpositioncol=higherposition%numberOfColumns;
+        int lowerpositioncol=lowerposition%numberOfColumns;
+        int higherpositionrow=higherposition/numberOfColumns;
+        int lowerpositionrow=lowerposition/numberOfColumns;
+        for(int i=higherpositioncol+1;i<=lowerpositioncol;i++){
+            if (!imageState.get((higherpositionrow*numberOfColumns)+i)){
+                connection1=false;
+                break;
+            }
+            else if(i==lowerpositioncol) connection1=true;
+        }
+        for(int i=higherpositionrow;i<=lowerpositionrow-1;i++){
+            if (!imageState.get((i*numberOfColumns)+lowerpositioncol)){
+                connection2=false;
+                break;
+            }
+            else if(i==lowerpositionrow-1) connection2=true;
+        }
+        if(connection1&&connection2){
+            return true;
+        }
+        for(int i=higherpositionrow+1;i<=lowerpositionrow;i++){
+            if (!imageState.get((i*numberOfColumns)+higherpositioncol)){
+                connection1=false;
+                break;
+            }
+            else if(i==lowerpositionrow) connection1=true;
+        }
+        for(int i=higherpositioncol;i<=lowerpositioncol-1;i++){
+            if (!imageState.get((lowerpositionrow*numberOfColumns)+i)){
+                connection2=false;
+                break;
+            }
+            else if(i==lowerpositioncol-1) connection2=true;
+        }
+        if(connection1&&connection2){
+            return true;
+        }
         return false;
     }
     public static boolean areAllImagesMatched() {

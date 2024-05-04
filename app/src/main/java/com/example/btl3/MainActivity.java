@@ -1,14 +1,11 @@
 package com.example.btl3;
 
-import static android.widget.Toast.makeText;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int previousClickedPosition = -1;
     public int numberOfColumns = 6;
-    public int NumberOfClick = 0;
+    public int NumberOfClick =0;
     public TextView timer;
     public Dialog dialog;
     public Button dialogtieptuc, dialogthoat;
@@ -97,9 +93,6 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-    // Modify onItemClick method to call checkAllImagesMatched() after each click
-
     @SuppressLint({"UseCompatLoadingForDrawables", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 showDialog2();
             }
         }.start();
-        
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         int repeatCount = 2;
@@ -151,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, StartActivity.class);
+                //Khởi chạy activity
                 startActivity(intent);
             }
         });
@@ -164,32 +158,15 @@ public class MainActivity extends AppCompatActivity {
                 int row = position / numberOfColumns;
 
                 if (previousClickedPosition != -1 && previousClickedPosition != position) {
-                     //Lấy số cột của vị trí trước đó
+                    // Lấy số cột của vị trí trước đó
                     int previousColumn = previousClickedPosition % numberOfColumns;
                     int previousRow = previousClickedPosition / numberOfColumns;
 
-                    // Kiểm tra xem cả hai vị trí có cùng nằm trên cùng một hàng thẳng hay không
-                    boolean column2 = false;
-                    boolean column3 = false;
-                    boolean row2 = false;
-                    boolean row3 = false;
+
                     boolean isHorizontalNeighbor = (row == previousRow) && (Math.abs(column - previousColumn) == 1);
                     boolean isVerticalNeighbor = (column == previousColumn) && (Math.abs(row - previousRow) == 1);
                     boolean isSameRow = row == previousRow;
                     boolean isSameColumn = column == previousColumn;
-
-                    if(column == 0 && previousColumn ==0){
-                        column2 =true;
-                    }
-                    if(column == 5 && previousColumn ==5){
-                        column3 =true;
-                    }
-                    if(row == 0 && previousRow ==0){
-                        row2 =true;
-                    }
-                    if(row == 9 && previousRow ==9){
-                        row3 =true;
-                    }
                     if (isSameRow) {
                         // Kiểm tra xem ảnh giữa hai ảnh có phải là ảnh rỗng hay không
                         boolean areMiddleImagesEmpty = imageAdapter.areMiddleImagesEmpty(previousClickedPosition, position);
@@ -216,19 +193,26 @@ public class MainActivity extends AppCompatActivity {
                             imageAdapter.setImageState(position, true);
                         }
                     }
-                    if ( (column == previousColumn && column2)||(column == previousColumn && column3)
-                            || (row == previousRow && row2) || (row == previousRow && row3)
-                    || isHorizontalNeighbor || isVerticalNeighbor) {
-                        // Hai vị trí nằm trên cùng một hàng thẳng, thực hiện xử lý
+                    if(imageAdapter.CommonCol3Dashes(previousClickedPosition,position,numberOfColumns)||imageAdapter.CommonRow3Dashes(previousClickedPosition,position,numberOfColumns)){
                         if (imageAdapter.isImagesMatched(previousClickedPosition, position)) {
-                            // Cập nhật trạng thái của cả hai hình ảnh thành hình ảnh trống
+                            imageAdapter.setImageState(previousClickedPosition, true);
+                            imageAdapter.setImageState(position, true);
+                        }
+                    }
+                    if(imageAdapter.ForwardSlash2Dashes(previousClickedPosition,position,numberOfColumns)||imageAdapter.BackwardSlash2Dashes(previousClickedPosition,position,numberOfColumns)){
+                        if (imageAdapter.isImagesMatched(previousClickedPosition, position)) {
+                            imageAdapter.setImageState(previousClickedPosition, true);
+                            imageAdapter.setImageState(position, true);
+                        }
+                    }
+                    if (isHorizontalNeighbor || isVerticalNeighbor) {
+                        if (imageAdapter.isImagesMatched(previousClickedPosition, position)) {
                             imageAdapter.setImageState(previousClickedPosition, true);
                             imageAdapter.setImageState(position, true);
                         }
                     }
                     checkAllImagesMatched();
                 }
-
                 // Lưu vị trí của hình ảnh hiện tại để sử dụng cho lần nhấp tiếp theo
                 previousClickedPosition = position;
                 NumberOfClick++;
@@ -242,6 +226,4 @@ public class MainActivity extends AppCompatActivity {
     public void TamDung(View view){
         dialog.show();
     }
-
-
 }
